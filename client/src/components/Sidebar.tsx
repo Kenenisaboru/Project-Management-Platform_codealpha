@@ -19,6 +19,7 @@ import { RootState } from '@/lib/store';
 import { logout } from '@/lib/features/auth/authSlice';
 import { setWorkspaces, setCurrentWorkspace } from '@/lib/features/workspace/workspaceSlice';
 import api from '@/lib/api';
+import CreateWorkspaceModal from './ui/CreateWorkspaceModal';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
@@ -34,6 +35,7 @@ export default function Sidebar() {
   const user = useSelector((state: RootState) => state.auth.user);
   const { workspaces, currentWorkspace } = useSelector((state: RootState) => state.workspace);
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchWorkspaces = async () => {
@@ -104,7 +106,13 @@ export default function Sidebar() {
                   </button>
                 ))}
               </div>
-              <button className="flex w-full items-center gap-2 border-t border-white/10 px-3 py-2 text-xs font-medium text-indigo-400 hover:bg-white/5 transition-all">
+              <button 
+                onClick={() => {
+                  setIsCreateModalOpen(true);
+                  setIsWorkspaceOpen(false);
+                }}
+                className="flex w-full items-center gap-2 border-t border-white/10 px-3 py-2 text-xs font-medium text-indigo-400 hover:bg-white/5 transition-all"
+              >
                 <Plus className="h-3 w-3" />
                 Create Workspace
               </button>
@@ -151,6 +159,11 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
+
+      <CreateWorkspaceModal 
+        isOpen={isCreateModalOpen} 
+        onClose={() => setIsCreateModalOpen(false)} 
+      />
     </aside>
   );
 }
