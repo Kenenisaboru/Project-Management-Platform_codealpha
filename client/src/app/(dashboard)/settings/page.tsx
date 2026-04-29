@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import api from '@/lib/api';
-import { setCredentials } from '@/lib/features/auth/authSlice';
+import { setCredentials, updateUser } from '@/lib/features/auth/authSlice';
 import { setCurrentWorkspace, setWorkspaces } from '@/lib/features/workspace/workspaceSlice';
 import { 
   User, 
@@ -41,7 +41,7 @@ export default function SettingsPage() {
     setIsSavingUser(true);
     try {
       const response = await api.put('/auth/profile', userForm);
-      dispatch(setCredentials({ user: response.data }));
+      dispatch(updateUser(response.data));
       alert('Profile updated successfully!');
     } catch (err) {
       console.error('Update profile error', err);
