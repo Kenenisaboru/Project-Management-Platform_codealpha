@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import StoreProvider from "@/components/StoreProvider";
+import AuthProvider from "@/components/AuthProvider";
 import ToastContainer from "@/components/ui/Toast";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
@@ -24,15 +25,17 @@ export default function RootLayout({
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased`}>
         <ErrorBoundary>
           <StoreProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-              <ToastContainer />
-            </ThemeProvider>
+            <AuthProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {children}
+                <ToastContainer />
+              </ThemeProvider>
+            </AuthProvider>
           </StoreProvider>
         </ErrorBoundary>
       </body>
