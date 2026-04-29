@@ -9,11 +9,17 @@ import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import CreateProjectModal from '@/components/ui/CreateProjectModal';
+import EmptyState from '@/components/ui/EmptyState';
+import SearchBar from '@/components/ui/SearchBar';
+import QuickActionsFAB from '@/components/ui/QuickActionsFAB';
+import { ProjectCardSkeleton, StatCardSkeleton } from '@/components/ui/Skeleton';
 
 export default function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { currentWorkspace } = useSelector((state: RootState) => state.workspace);
 
   const [stats, setStats] = useState({
@@ -34,6 +40,7 @@ export default function DashboardPage() {
         api.get(`/workspaces/${currentWorkspace.id}/stats`)
       ]);
       setProjects(projRes.data);
+      setFilteredProjects(projRes.data);
       setStats(statsRes.data);
     } catch (err) {
       console.error('Fetch error', err);
@@ -46,6 +53,18 @@ export default function DashboardPage() {
     fetchProjects();
   }, [currentWorkspace]);
 
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = projects.filter(project =>
+        project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (project.description && project.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+      setFilteredProjects(filtered);
+    } else {
+      setFilteredProjects(projects);
+    }
+  }, [searchQuery, projects]);
+
   const statCards = [
     { label: 'Active Projects', value: stats.activeProjects, icon: FolderKanban, color: 'text-indigo-400' },
     { label: 'Pending Tasks', value: stats.pendingTasks, icon: Clock, color: 'text-amber-400' },
@@ -55,39 +74,54 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-10">
-      <header className="flex items-center justify-between">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-outfit text-4xl font-bold tracking-tight text-white">Overview</h1>
           <p className="text-white/50 text-lg">Welcome back! Here's what's happening today.</p>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-bold text-black hover:bg-white/90 transition-all shadow-xl"
-        >
-          <Plus className="h-5 w-5" />
-          New Project
-        </button>
+        <div className="flex items-center gap-3">
+          <SearchBar 
+            onSearch={setSearchQuery} 
+            placeholder="Search projects..."
+          />
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-bold text-black hover:bg-white/90 transition-all shadow-xl shrink-0"
+          >
+            <Plus className="h-5 w-5" />
+            <span className="hidden sm:inline">New Project</span>
+          </button>
+        </div>
       </header>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="glass-card p-6"
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <div className={`rounded-lg bg-white/5 p-2 ${stat.color}`}>
-                <stat.icon className="h-6 w-6" />
+        {loading ? (
+          <>
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+          </>
+        ) : (
+          statCards.map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="glass-card p-6"
+            >
+              <div className="mb-4 flex items-center justify-between">
+                <div className={`rounded-lg bg-white/5 p-2 ${stat.color}`}>
+                  <stat.icon className="h-6 w-6" />
+                </div>
               </div>
-            </div>
-            <p className="text-sm font-medium text-white/40">{stat.label}</p>
-            <h3 className="text-3xl font-bold text-white">{stat.value}</h3>
-          </motion.div>
-        ))}
+              <p className="text-sm font-medium text-white/40">{stat.label}</p>
+              <h3 className="text-3xl font-bold text-white">{stat.value}</h3>
+            </motion.div>
+          ))
+        )}
       </div>
 
       {/* Projects Section */}
@@ -99,13 +133,13 @@ export default function DashboardPage() {
 
         {loading ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="h-48 animate-pulse rounded-2xl bg-white/5 border border-white/10" />
-            ))}
+            <ProjectCardSkeleton />
+            <ProjectCardSkeleton />
+            <ProjectCardSkeleton />
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {projects.length > 0 ? projects.slice(0, 6).map((project) => (
+            {filteredProjects.length > 0 ? filteredProjects.slice(0, 6).map((project) => (
               <Link key={project.id} href={`/projects/${project.id}`}>
                 <motion.div
                   whileHover={{ scale: 1.02 }}
@@ -134,9 +168,11 @@ export default function DashboardPage() {
                 </motion.div>
               </Link>
             )) : (
-              <div className="col-span-full py-20 text-center glass-card border-dashed">
-                <p className="text-white/40">No projects found. Create your first one!</p>
-              </div>
+              <EmptyState 
+                type="projects" 
+                onCreate={() => setIsModalOpen(true)}
+                actionLabel="Create Project"
+              />
             )}
           </div>
         )}
@@ -150,6 +186,10 @@ export default function DashboardPage() {
           onProjectCreated={fetchProjects}
         />
       )}
+
+      <QuickActionsFAB
+        onCreateProject={() => setIsModalOpen(true)}
+      />
     </div>
   );
 }
