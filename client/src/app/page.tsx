@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Layers, Zap, Shield, Rocket, Star, Quote, Check, Crown } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import Pricing from "@/components/Pricing";
+import Collaboration from "@/components/Collaboration";
 import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
 
@@ -120,9 +120,11 @@ export default function Home() {
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
             </Link>
-            <button className="glass-button h-12 rounded-xl px-8 font-medium">
-              Watch Demo
-            </button>
+            <Link href="/login">
+              <button className="glass-button h-12 rounded-xl px-8 font-medium hover:bg-white/5 transition-all">
+                Log in
+              </button>
+            </Link>
           </div>
         </motion.div>
 
@@ -250,8 +252,8 @@ export default function Home() {
         {/* Social Proof */}
         <Testimonials />
 
-        {/* Pricing Section */}
-        <Pricing />
+        {/* Collaboration Section */}
+        <Collaboration />
       </main>
       <Footer />
     </div>
