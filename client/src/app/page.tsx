@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, Layers, Zap, Shield, Rocket, Star, Quote, Check, Crown } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import LogoCloud from "@/components/LogoCloud";
+import Pricing from "@/components/Pricing";
+import Testimonials from "@/components/Testimonials";
 
 const testimonials = [
   {
@@ -245,8 +246,11 @@ export default function Home() {
           </div>
         </motion.div>
 
-        {/* Logo Cloud Section */}
-        <LogoCloud />
+        {/* Social Proof */}
+        <Testimonials />
+
+        {/* Pricing Section */}
+        <Pricing />
       </main>
     </div>
   );
