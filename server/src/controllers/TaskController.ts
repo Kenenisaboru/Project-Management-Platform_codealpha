@@ -47,12 +47,22 @@ export const createTask = async (req: Request, res: Response) => {
 
 export const getTasks = async (req: Request, res: Response) => {
   try {
-    const { projectId } = req.query;
-    if (!projectId) {
-      return res.status(400).json({ message: 'projectId is required' });
+    const { projectId, assigneeId, status } = req.query;
+    
+    const query: any = {};
+    if (projectId) query.projectId = projectId;
+    if (assigneeId) query.assigneeId = assigneeId;
+    if (status) query.status = status;
+
+    if (Object.keys(query).length === 0) {
+      return res.status(400).json({ message: 'At least one filter (projectId or assigneeId) is required' });
     }
 
-    const tasks = await Task.find({ projectId }).populate('assigneeId', 'firstName lastName avatarUrl');
+    const tasks = await Task.find(query)
+      .populate('assigneeId', 'firstName lastName avatarUrl')
+      .populate('projectId', 'name')
+      .sort({ updatedAt: -1 });
+      
     res.json(tasks);
   } catch (err) {
     logger.error('Get tasks error', err);
