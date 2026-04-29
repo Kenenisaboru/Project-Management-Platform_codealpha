@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import ActivityFeed from '@/components/ui/ActivityFeed';
 
 export default function DashboardLayout({
   children,
@@ -25,8 +26,15 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-black text-white">
       <Sidebar />
-      <main className="lg:ml-64 p-8">
-        {children}
+      <main className="lg:ml-64">
+        <div className="flex">
+          <div className="flex-1 p-8">
+            {children}
+          </div>
+          <aside className="hidden xl:block w-80 p-8 border-l border-white/10">
+            <ActivityFeed />
+          </aside>
+        </div>
       </main>
     </div>
   );
