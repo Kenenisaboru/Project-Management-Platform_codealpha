@@ -16,15 +16,27 @@ export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { currentWorkspace } = useSelector((state: RootState) => state.workspace);
 
+  const [stats, setStats] = useState({
+    activeProjects: 0,
+    totalTasks: 0,
+    completedTasks: 0,
+    pendingTasks: 0,
+    efficiency: 0
+  });
+
   const fetchProjects = async () => {
     if (!currentWorkspace) return;
     
     setLoading(true);
     try {
-      const response = await api.get(`/projects?workspaceId=${currentWorkspace.id}`);
-      setProjects(response.data);
+      const [projRes, statsRes] = await Promise.all([
+        api.get(`/projects?workspaceId=${currentWorkspace.id}`),
+        api.get(`/workspaces/${currentWorkspace.id}/stats`)
+      ]);
+      setProjects(projRes.data);
+      setStats(statsRes.data);
     } catch (err) {
-      console.error('Fetch projects error', err);
+      console.error('Fetch error', err);
     } finally {
       setLoading(false);
     }
@@ -34,11 +46,11 @@ export default function DashboardPage() {
     fetchProjects();
   }, [currentWorkspace]);
 
-  const stats = [
-    { label: 'Active Projects', value: projects.length, icon: FolderKanban, color: 'text-indigo-400' },
-    { label: 'Tasks Due Today', value: '12', icon: Clock, color: 'text-amber-400' },
-    { label: 'Completed Tasks', value: '128', icon: CheckCircle2, color: 'text-emerald-400' },
-    { label: 'Efficiency', value: '+14%', icon: TrendingUp, color: 'text-pink-400' },
+  const statCards = [
+    { label: 'Active Projects', value: stats.activeProjects, icon: FolderKanban, color: 'text-indigo-400' },
+    { label: 'Pending Tasks', value: stats.pendingTasks, icon: Clock, color: 'text-amber-400' },
+    { label: 'Completed Tasks', value: stats.completedTasks, icon: CheckCircle2, color: 'text-emerald-400' },
+    { label: 'Completion Rate', value: `${stats.efficiency}%`, icon: TrendingUp, color: 'text-pink-400' },
   ];
 
   return (
@@ -59,7 +71,7 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, i) => (
+        {statCards.map((stat, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
