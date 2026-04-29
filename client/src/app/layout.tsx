@@ -3,7 +3,8 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import StoreProvider from "@/components/StoreProvider";
-import AuthInitializer from "@/components/AuthInitializer";
+import ToastContainer from "@/components/ui/Toast";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -20,9 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${outfit.variable} font-sans`}>
-        <StoreProvider>
-          <AuthInitializer>
+      <body className={`${inter.variable} ${outfit.variable} font-sans antialiased`}>
+        <ErrorBoundary>
+          <StoreProvider>
             <ThemeProvider
               attribute="class"
               defaultTheme="dark"
@@ -30,9 +31,10 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               {children}
+              <ToastContainer />
             </ThemeProvider>
-          </AuthInitializer>
-        </StoreProvider>
+          </StoreProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
