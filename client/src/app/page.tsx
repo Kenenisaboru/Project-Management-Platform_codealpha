@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Pricing from "@/components/Pricing";
 import Testimonials from "@/components/Testimonials";
+import Footer from "@/components/Footer";
 
 const testimonials = [
   {
@@ -252,6 +253,7 @@ export default function Home() {
         {/* Pricing Section */}
         <Pricing />
       </main>
+      <Footer />
     </div>
   );
 }
