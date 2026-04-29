@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { Project, Task, TaskStatus } from '@/lib/shared/types';
 import { Plus, MoreVertical, Calendar, User as UserIcon, Clock } from 'lucide-react';
 import CreateTaskModal from '@/components/ui/CreateTaskModal';
+import TaskDetailPanel from '@/components/ui/TaskDetailPanel';
 import { socketService } from '@/lib/socket';
 
 const columns: { title: string; status: TaskStatus }[] = [
@@ -22,6 +23,8 @@ export default function ProjectPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -144,7 +147,11 @@ export default function ProjectPage() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="glass-card group cursor-pointer p-4 hover:border-white/20 transition-all"
+                      onClick={() => {
+                        setSelectedTask(task);
+                        setIsPanelOpen(true);
+                      }}
+                      className="glass-card group cursor-pointer p-4 hover:border-indigo-500/30 transition-all active:scale-[0.98]"
                     >
                       <div className="mb-3 flex flex-wrap gap-2">
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
@@ -188,6 +195,15 @@ export default function ProjectPage() {
         onClose={() => setIsModalOpen(false)} 
         projectId={id as string}
         onTaskCreated={handleTaskCreated}
+      />
+      <TaskDetailPanel 
+        task={selectedTask}
+        isOpen={isPanelOpen}
+        onClose={() => setIsPanelOpen(false)}
+        onUpdate={(updates) => {
+          // TODO: Implement task update logic
+          setTasks(prev => prev.map(t => t.id === selectedTask?.id ? { ...t, ...updates } : t));
+        }}
       />
     </div>
   );
