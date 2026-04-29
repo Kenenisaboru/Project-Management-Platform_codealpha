@@ -157,3 +157,18 @@ export const logout = async (req: Request, res: Response) => {
   res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'strict' });
   res.json({ message: 'Logged out' });
 };
+
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const { firstName, lastName } = req.body;
+    const user = await User.findByIdAndUpdate(
+      (req as any).user._id,
+      { firstName, lastName },
+      { new: true }
+    );
+    res.json(user);
+  } catch (err) {
+    logger.error('Update profile error', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
