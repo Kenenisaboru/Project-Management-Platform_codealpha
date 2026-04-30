@@ -47,19 +47,27 @@ export default function Sidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    (window as any).openWorkspaceModal = () => setIsCreateModalOpen(true);
+    return () => { delete (window as any).openWorkspaceModal; };
+  }, []);
+
+  useEffect(() => {
     const fetchWorkspaces = async () => {
+      dispatch(setLoading(true));
       try {
         const response = await api.get('/workspaces');
         dispatch(setWorkspaces(response.data));
       } catch (err) {
         console.error('Fetch workspaces error', err);
+      } finally {
+        dispatch(setLoading(false));
       }
     };
 
     if (workspaces.length === 0) {
       fetchWorkspaces();
     }
-  }, [dispatch, workspaces.length]);
+  }, [dispatch]);
 
   const handleLogout = async () => {
     try {
@@ -121,10 +129,10 @@ export default function Sidebar() {
             >
               <div className="flex items-center gap-2 overflow-hidden">
                 <div className="h-6 w-6 shrink-0 rounded bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-xs font-bold">
-                  {currentWorkspace?.name?.[0] || 'W'}
+                  {currentWorkspace?.name?.[0] || (workspaces.length === 0 ? '?' : 'W')}
                 </div>
                 <span className="truncate text-sm font-medium text-white/80">
-                  {currentWorkspace?.name || 'Loading...'}
+                  {currentWorkspace?.name || (workspaces.length === 0 ? 'No Workspace' : 'Select Workspace')}
                 </span>
               </div>
               <ChevronDown className={`h-4 w-4 text-white/40 transition-transform ${isWorkspaceOpen ? 'rotate-180' : ''}`} />
