@@ -40,6 +40,7 @@ export default function CreateProjectModal({ isOpen, onClose, workspaceId, onPro
   });
 
   const onSubmit = async (data: ProjectFormValues) => {
+    console.log('Creating project with workspaceId:', workspaceId);
     setIsLoading(true);
     try {
       const response = await api.post('/projects', { ...data, workspaceId });
