@@ -42,7 +42,7 @@ export default function Footer() {
           <div className="space-y-6">
             <Link href="/" className="flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#00A8E8] to-[#88C057] font-bold text-white shadow-lg overflow-hidden">
-                <img src="http://192.168.137.89:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-xl">K</span>'; }} />
+                <img src="/kanutech-logo.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-xl">K</span>'; }} />
               </div>
               <span className="font-outfit text-2xl font-bold tracking-tight text-white">
                 KanuTech Pro
