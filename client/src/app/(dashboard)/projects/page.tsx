@@ -111,15 +111,11 @@ export default function ProjectsPage() {
                   <div className="flex items-center justify-between pt-4 border-t border-white/5 text-xs text-white/30">
                     <span className="flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5" />
-                      Updated 2h ago
+                      {new Date(project.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
-                    <div className="flex -space-x-2">
-                      {[1, 2, 3].map((n) => (
-                        <div key={n} className="h-6 w-6 rounded-full bg-white/10 border border-black flex items-center justify-center">
-                          <span className="text-[10px] font-bold">U{n}</span>
-                        </div>
-                      ))}
-                    </div>
+                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium">
+                      {project.status}
+                    </span>
                   </div>
                 </div>
               </Link>
