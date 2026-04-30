@@ -1,8 +1,52 @@
 import { Request, Response } from 'express';
 import Task from '../models/Task';
 import Project from '../models/Project';
+import User from '../models/User';
 import { logger, io } from '../index';
 import { z } from 'zod';
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT) || 587,
+  secure: Number(process.env.SMTP_PORT) === 465,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+
+const sendAssignmentEmail = async (
+  assigneeId: string,
+  taskTitle: string,
+  projectId: string,
+  assignedByName: string
+) => {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER) return;
+  try {
+    const assignee = await User.findById(assigneeId).select('email firstName');
+    if (!assignee) return;
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || 'no-reply@kanutech.pro',
+      to: assignee.email,
+      subject: `✅ You've been assigned: "${taskTitle}"`,
+      html: `
+        <div style="font-family:sans-serif;max-width:500px;margin:0 auto">
+          <h2 style="color:#6366f1">New Task Assignment</h2>
+          <p>Hi ${assignee.firstName},</p>
+          <p><strong>${assignedByName}</strong> assigned you to a task:</p>
+          <div style="border-left:3px solid #6366f1;padding:12px 16px;background:#f5f5ff;border-radius:4px;margin:16px 0">
+            <strong>${taskTitle}</strong>
+          </div>
+          <p><a href="${process.env.CLIENT_URL}/projects/${projectId}" style="color:#6366f1">View Task →</a></p>
+        </div>
+      `,
+    });
+    logger.info(`Assignment email sent to ${assignee.email}`);
+  } catch (err) {
+    logger.warn('Failed to send assignment email', err);
+  }
+};
 
 const taskSchema = z.object({
   title: z.string().min(1).max(200),
@@ -34,6 +78,16 @@ export const createTask = async (req: Request, res: Response) => {
 
     // Emit real-time event
     io.to(data.projectId).emit('taskCreated', task);
+
+    // Send assignment email if an assignee was set
+    if (data.assigneeId && data.assigneeId !== user._id.toString()) {
+      await sendAssignmentEmail(
+        data.assigneeId,
+        data.title,
+        data.projectId,
+        `${user.firstName} ${user.lastName}`
+      );
+    }
 
     res.status(201).json(task);
   } catch (err: any) {
@@ -72,6 +126,8 @@ export const getTasks = async (req: Request, res: Response) => {
 
 export const updateTask = async (req: Request, res: Response) => {
   try {
+    const updater = (req as any).user;
+    const prevTask = await Task.findById(req.params.id);
     const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
@@ -79,6 +135,22 @@ export const updateTask = async (req: Request, res: Response) => {
 
     // Emit real-time update
     io.to(task.projectId.toString()).emit('taskUpdated', task);
+
+    // Send assignment email if assignee changed
+    const newAssigneeId = req.body.assigneeId;
+    const prevAssigneeId = prevTask?.assigneeId?.toString();
+    if (
+      newAssigneeId &&
+      newAssigneeId !== prevAssigneeId &&
+      newAssigneeId !== updater._id.toString()
+    ) {
+      await sendAssignmentEmail(
+        newAssigneeId,
+        task.title,
+        task.projectId.toString(),
+        `${updater.firstName} ${updater.lastName}`
+      );
+    }
 
     res.json(task);
   } catch (err) {
