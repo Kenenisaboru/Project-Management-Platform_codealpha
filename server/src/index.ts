@@ -9,6 +9,7 @@ import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import winston from 'winston';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 import authRoutes from './routes/authRoutes';
 import projectRoutes from './routes/projectRoutes';
 import taskRoutes from './routes/taskRoutes';
@@ -53,7 +54,9 @@ const logger = winston.createLogger({
 });
 
 // Middleware stack
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(cors({
   origin: (origin, callback) => {
     // Allow same-origin server calls and non-browser clients.
@@ -67,6 +70,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('dev'));
 
+// Static files for images
+app.use('/static', express.static(path.join(__dirname, 'images')));
+
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/projects', projectRoutes);
@@ -75,7 +81,7 @@ app.use('/api/v1/workspaces', workspaceRoutes);
 
 // Health endpoint
 app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok', service: 'TaskFlow Pro X API' });
+  res.status(200).json({ status: 'ok', service: 'KanuTech Pro API' });
 });
 
 // 404 handler
