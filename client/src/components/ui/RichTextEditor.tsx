@@ -1,6 +1,9 @@
 'use client';
 
 import { useEditor, EditorContent } from '@tiptap/react';
+// @ts-ignore - Fix for JSX component type error in some React versions
+const TiptapEditorContent = EditorContent as any;
+
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import { 
@@ -107,7 +110,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
   return (
     <div className="w-full rounded-xl border border-white/10 bg-white/5 overflow-hidden focus-within:border-indigo-500/50 transition-all">
       <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
+      <TiptapEditorContent editor={editor} />
     </div>
   );
 }
