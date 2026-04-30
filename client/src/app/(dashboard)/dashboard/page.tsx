@@ -14,6 +14,41 @@ import SearchBar from '@/components/ui/SearchBar';
 import QuickActionsFAB from '@/components/ui/QuickActionsFAB';
 import { ProjectCardSkeleton, StatCardSkeleton } from '@/components/ui/Skeleton';
 import OnboardingTour from '@/components/OnboardingTour';
+import AnalyticsCharts from '@/components/ui/AnalyticsCharts';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import { Download, FileText, Image as ImageIcon } from 'lucide-react';
+
+// Mock data for analytics
+const analyticsData = {
+  taskDistribution: [
+    { name: 'To Do', value: 35, color: '#94a3b8' },
+    { name: 'In Progress', value: 25, color: '#6366f1' },
+    { name: 'Review', value: 20, color: '#a855f7' },
+    { name: 'Done', value: 20, color: '#10b981' },
+  ],
+  projectProgress: [
+    { name: 'Project A', progress: 75 },
+    { name: 'Project B', progress: 45 },
+    { name: 'Project C', progress: 90 },
+    { name: 'Project D', progress: 30 },
+  ],
+  activityOverTime: [
+    { date: 'Mon', tasks: 12 },
+    { date: 'Tue', tasks: 18 },
+    { date: 'Wed', tasks: 15 },
+    { date: 'Thu', tasks: 25 },
+    { date: 'Fri', tasks: 22 },
+    { date: 'Sat', tasks: 10 },
+    { date: 'Sun', tasks: 8 },
+  ],
+  efficiency: [
+    { name: 'Week 1', value: 85 },
+    { name: 'Week 2', value: 92 },
+    { name: 'Week 3', value: 88 },
+    { name: 'Week 4', value: 95 },
+  ],
+};
 
 export default function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -22,6 +57,39 @@ export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { currentWorkspace } = useSelector((state: RootState) => state.workspace);
+
+  const handleExport = async (format: 'pdf' | 'png') => {
+    const element = document.getElementById('analytics-section');
+    if (!element) return;
+
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#000000',
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+
+      if (format === 'pdf') {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('l', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`analytics-report-${new Date().toISOString().split('T')[0]}.pdf`);
+      } else {
+        const link = document.createElement('a');
+        link.download = `analytics-report-${new Date().toISOString().split('T')[0]}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }
+      toast.success(`Exported as ${format.toUpperCase()} successfully`);
+    } catch (err) {
+      console.error('Export error:', err);
+      toast.error('Failed to export analytics');
+    }
+  };
 
   const [stats, setStats] = useState({
     activeProjects: 0,
@@ -74,30 +142,30 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6 sm:space-y-10">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-outfit text-4xl font-bold tracking-tight text-white">Overview</h1>
-          <p className="text-white/50 text-lg">Welcome back! Here's what's happening today.</p>
+          <h1 className="font-outfit text-3xl sm:text-4xl font-bold tracking-tight text-white">Overview</h1>
+          <p className="text-white/50 text-base sm:text-lg">Welcome back! Here's what's happening today.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <SearchBar 
             onSearch={setSearchQuery} 
             placeholder="Search projects..."
-            className="tour-search-bar"
+            className="tour-search-bar w-full sm:w-auto"
           />
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-bold text-black hover:bg-white/90 transition-all shadow-xl shrink-0"
+            className="flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 font-bold text-black hover:bg-white/90 transition-all shadow-xl shrink-0"
           >
             <Plus className="h-5 w-5" />
-            <span className="hidden sm:inline">New Project</span>
+            <span>New Project</span>
           </button>
         </div>
       </header>
 
       {/* Stats Grid */}
-      <div className="tour-stats grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="tour-stats grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
         {loading ? (
           <>
             <StatCardSkeleton />
@@ -125,6 +193,45 @@ export default function DashboardPage() {
           ))
         )}
       </div>
+
+      {/* Analytics Charts */}
+      {!loading && projects.length > 0 && (
+        <section className="tour-analytics">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold font-outfit text-white">Advanced Analytics</h2>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Live Monitoring</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <div className="flex items-center rounded-xl bg-white/5 p-1 border border-white/10">
+                <button
+                  onClick={() => handleExport('pdf')}
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-white/60 hover:bg-white/10 hover:text-white transition-all"
+                  title="Export as PDF"
+                >
+                  <FileText className="h-4 w-4" />
+                  PDF
+                </button>
+                <button
+                  onClick={() => handleExport('png')}
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-white/60 hover:bg-white/10 hover:text-white transition-all"
+                  title="Export as Image"
+                >
+                  <ImageIcon className="h-4 w-4" />
+                  PNG
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="analytics-section">
+            <AnalyticsCharts data={analyticsData} />
+          </div>
+        </section>
+      )}
 
       {/* Projects Section */}
       <section className="tour-projects">
