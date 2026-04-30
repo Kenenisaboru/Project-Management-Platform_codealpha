@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Layers, Zap, Shield, Rocket, Star, Quote, Check, Crown } from "lucide-react";
+import { ArrowRight, Layers, Zap, Shield, Rocket, Star, Quote, Check, Crown, Mail, Lock, Eye, LogIn } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Collaboration from "@/components/Collaboration";
@@ -12,7 +12,7 @@ const testimonials = [
   {
     name: "Sarah Chen",
     role: "CTO at TechFlow",
-    content: "TaskFlow Pro X transformed how our team collaborates. The real-time updates and intuitive interface increased our productivity by 40%.",
+    content: "KanuTech Pro transformed how our team collaborates. The real-time updates and intuitive interface increased our productivity by 40%.",
     avatar: "SC",
     rating: 5,
   },
@@ -88,45 +88,116 @@ export default function Home() {
   return (
     <div className="bg-black min-h-screen">
       <Navbar />
-      <main className="flex flex-col items-center justify-center p-6 text-center pt-32">
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl"
-        >
-          <div className="mb-6 inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium backdrop-blur-md">
-            <span className="mr-2 flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Now in Private Alpha v1.0
-          </div>
-          
-          <h1 className="mb-6 font-outfit text-6xl font-bold tracking-tight md:text-8xl">
-            The Work OS for <br />
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Elite Teams.
-            </span>
-          </h1>
-          
-          <p className="mx-auto mb-10 max-w-2xl text-lg text-white/60 md:text-xl">
-            TaskFlow Pro X combines the flexibility of Notion with the power of Jira. 
-            Engineered for speed, choreography, and enterprise-grade collaboration.
-          </p>
+      <main className="max-w-7xl mx-auto px-6 pt-32 pb-20">
+        {/* Hero Section with Login */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-left"
+          >
+            <div className="mb-6 inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium backdrop-blur-md">
+              <span className="mr-2 flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Now in Elite Early Access v1.0
+            </div>
+            
+            <h1 className="mb-6 font-outfit text-5xl font-bold tracking-tight md:text-7xl lg:text-8xl leading-[1.1]">
+              The Work OS for <br />
+              <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Elite Teams.
+              </span>
+            </h1>
+            
+            <p className="mb-10 max-w-xl text-lg text-white/60 md:text-xl">
+              KanuTech Pro combines the flexibility of Notion with the power of Jira. 
+              Engineered for speed, choreography, and enterprise-grade collaboration.
+            </p>
 
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link href="/register">
-              <button className="glass-button group flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-8 text-black transition-all hover:bg-white/90">
-                Get Started
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </button>
-            </Link>
-            <Link href="/login">
-              <button className="glass-button h-12 rounded-xl px-8 font-medium hover:bg-white/5 transition-all">
-                Log in
-              </button>
-            </Link>
-          </div>
-        </motion.div>
+            <div className="flex flex-wrap gap-4">
+              <div className="flex -space-x-3 overflow-hidden">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="inline-block h-10 w-10 rounded-full border-2 border-black bg-white/10 backdrop-blur-sm" />
+                ))}
+              </div>
+              <div className="text-sm">
+                <span className="block font-bold text-white">Join 10k+ elite builders</span>
+                <span className="text-white/50">Experience the future of work</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* The Login Part Requested */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full max-w-md mx-auto lg:ml-auto"
+          >
+            <div className="glass-card p-8 border border-white/10 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-20">
+                <Crown className="h-12 w-12 text-indigo-500" />
+              </div>
+              
+              <div className="mb-8">
+                <h2 className="font-outfit text-4xl font-bold text-white mb-2">Welcome Back</h2>
+                <p className="text-white/60">Sign in to access your workspace</p>
+              </div>
+
+              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-white/80">Email Address</label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500/60" />
+                    <input
+                      type="email"
+                      defaultValue="Gamachis@haramaya.edu.et"
+                      className="w-full rounded-2xl border-none bg-[#F0F7FF] pl-12 pr-4 py-4 text-gray-900 font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-gray-400"
+                      placeholder="name@company.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-white/80">Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500/60" />
+                    <input
+                      type="password"
+                      defaultValue="••••••••••••"
+                      className="w-full rounded-2xl border-none bg-[#F0F7FF] pl-12 pr-12 py-4 text-gray-900 font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-gray-400"
+                    />
+                    <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                      <Eye className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-xs sm:text-sm">
+                  <label className="flex items-center gap-2 text-white/60 cursor-pointer">
+                    <input type="checkbox" className="rounded border-white/20 bg-white/5 text-indigo-500" />
+                    Remember me
+                  </label>
+                  <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">
+                    Forgot password?
+                  </Link>
+                </div>
+
+                <button className="w-full rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 py-4 font-bold text-white shadow-xl shadow-indigo-500/20 hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                  <LogIn className="h-5 w-5" />
+                  Sign In to KanuTech Pro
+                </button>
+
+                <p className="text-center text-sm text-white/40">
+                  New to KanuTech Pro?{' '}
+                  <Link href="/register" className="text-white hover:underline font-bold">
+                    Create free account
+                  </Link>
+                </p>
+              </form>
+            </div>
+          </motion.div>
+        </div>
 
         {/* Feature Grid */}
         <motion.div 
