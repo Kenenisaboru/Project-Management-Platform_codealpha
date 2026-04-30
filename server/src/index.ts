@@ -14,6 +14,7 @@ import authRoutes from './routes/authRoutes';
 import projectRoutes from './routes/projectRoutes';
 import taskRoutes from './routes/taskRoutes';
 import workspaceRoutes from './routes/workspaceRoutes';
+import commentRoutes from './routes/commentRoutes';
 import { notFound, errorHandler } from './middleware/errorMiddleware';
 
 // Load environment variables
@@ -77,6 +78,7 @@ app.use('/static', express.static(path.join(__dirname, 'images')));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/projects', projectRoutes);
 app.use('/api/v1/tasks', taskRoutes);
+app.use('/api/v1/tasks/:taskId/comments', commentRoutes);
 app.use('/api/v1/workspaces', workspaceRoutes);
 
 // Health endpoint
