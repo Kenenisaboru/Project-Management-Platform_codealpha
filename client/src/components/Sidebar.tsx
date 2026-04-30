@@ -101,8 +101,9 @@ export default function Sidebar() {
         <div className="flex h-full flex-col px-4 py-6">
           <div className="mb-10 flex items-center justify-between px-2">
             <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white">T</div>
-              <span className="font-outfit text-xl font-bold tracking-tight text-white">TaskFlow Pro</span>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#00A8E8] to-[#88C057] shadow-lg shadow-black/20 overflow-hidden">
+              <img src="http://localhost:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-xl font-bold text-white">K</span>'; }} />
+            </div>  <span className="font-outfit text-xl font-bold tracking-tight text-white">KanuTech Pro</span>
             </Link>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
