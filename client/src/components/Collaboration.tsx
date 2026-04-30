@@ -34,12 +34,12 @@ export default function Collaboration() {
         <div className="glass-card overflow-hidden bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 p-12 lg:p-20">
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
             <div>
-              <h2 className="text-base font-semibold leading-7 text-indigo-400">TaskFlow is Free Forever</h2>
+              <h2 className="text-base font-semibold leading-7 text-indigo-400">KanuTech Pro is Free Forever</h2>
               <p className="mt-2 text-4xl font-bold tracking-tight text-white sm:text-6xl font-outfit">
                 Let's <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">collaborate</span> together.
               </p>
               <p className="mt-6 text-lg leading-8 text-white/50">
-                Forget complicated pricing tiers. TaskFlow Pro X is designed for everyone to build amazing projects together, for free. Invite your team, start a project, and experience the future of work.
+                Forget complicated pricing tiers. KanuTech Pro is designed for everyone to build amazing projects together, for free. Invite your team, start a project, and experience the future of work.
               </p>
               
               <div className="mt-10 flex items-center gap-x-6">
@@ -82,7 +82,7 @@ export default function Collaboration() {
           </div>
           <h3 className="text-3xl font-bold text-white font-outfit mb-4">Ready to build something great?</h3>
           <p className="text-white/40 max-w-xl mx-auto mb-10">
-            Join thousands of teams who have already switched to TaskFlow for their daily collaboration needs.
+            Join thousands of teams who have already switched to KanuTech Pro for their daily collaboration needs.
           </p>
         </div>
       </div>
