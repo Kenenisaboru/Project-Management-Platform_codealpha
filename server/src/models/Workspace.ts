@@ -25,6 +25,15 @@ const WorkspaceSchema = new Schema<IWorkspace>(
   { timestamps: true }
 );
 
+WorkspaceSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret: any) => {
+    ret.id = ret._id;
+    delete ret._id;
+  }
+});
+
 WorkspaceSchema.index({ orgId: 1 });
 
 export default mongoose.model<IWorkspace>('Workspace', WorkspaceSchema);
