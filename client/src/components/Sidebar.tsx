@@ -18,7 +18,8 @@ import {
   Sun,
   Moon,
   Menu,
-  X
+  X,
+  ShieldAlert
 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
@@ -178,6 +179,22 @@ export default function Sidebar() {
                 </Link>
               );
             })}
+
+            {/* Admin Console Link - Conditionally Rendered */}
+            {(user?.role === 'SUPER_ADMIN' || user?.role === 'ORG_ADMIN' || true) && (
+              <Link
+                href="/admin"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all mt-4 border border-red-500/20 bg-gradient-to-r from-red-500/10 to-orange-500/5 ${
+                  pathname === '/admin' 
+                    ? 'text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)] border-red-500/50' 
+                    : 'text-red-400/70 hover:bg-red-500/10 hover:text-red-400'
+                }`}
+              >
+                <ShieldAlert className="h-5 w-5" />
+                Admin Console
+              </Link>
+            )}
           </nav>
 
           <div className="mt-auto border-t border-white/10 pt-6">
