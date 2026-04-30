@@ -3,7 +3,24 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams } from 'next/navigation';
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import {
+  DndContext,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+  defaultDropAnimationSideEffects,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import api from '@/lib/api';
 import { socket } from '@/lib/socket';
 import { Project, Task, TaskStatus, TaskPriority } from '@/lib/shared/types';
@@ -19,17 +36,73 @@ const columns: { title: string; status: TaskStatus }[] = [
   { title: 'Done', status: TaskStatus.DONE },
 ];
 
+function SortableTaskCard({ task, index, onClick }: { task: Task; index: number; onClick: (task: Task) => void }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={() => onClick(task)}
+      className={`tour-task-card glass-card p-4 transition-all ${isDragging ? 'rotate-2 scale-105 shadow-2xl z-50 border-indigo-500/50 opacity-50' : 'hover:border-white/20'}`}
+    >
+      <div className="mb-3 flex flex-wrap gap-2">
+        {task.labels.map((label) => (
+          <span key={label} className="rounded-full bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium text-indigo-400">
+            {label}
+          </span>
+        ))}
+      </div>
+      <h4 className="mb-3 font-medium text-white/90">{task.title}</h4>
+      <div className="flex items-center justify-between text-[10px] text-white/40">
+        <div className="flex items-center gap-2">
+          <Clock className="h-3 w-3" />
+          {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date'}
+        </div>
+        <div className="h-5 w-5 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/20">
+          <UserIcon className="h-2 w-2 text-indigo-400" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ProjectPage() {
   const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     priority: null as TaskPriority | null,
     assignee: null as string | null,
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const fetchData = useCallback(async () => {
     try {
@@ -48,8 +121,6 @@ export default function ProjectPage() {
 
   useEffect(() => {
     fetchData();
-
-    // Socket.io integration
     socket.emit('joinProject', id);
 
     socket.on('taskCreated', (newTask: Task) => {
@@ -73,28 +144,74 @@ export default function ProjectPage() {
     };
   }, [id, fetchData]);
 
-  const onDragEnd = async (result: DropResult) => {
-    const { destination, source, draggableId } = result;
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id);
+  };
 
-    if (!destination) return;
-    if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+  const handleDragOver = (event: any) => {
+    const { active, over } = event;
+    if (!over) return;
 
-    const newStatus = destination.droppableId as TaskStatus;
-    const taskIndex = tasks.findIndex(t => t.id === draggableId);
-    if (taskIndex === -1) return;
+    const activeTask = tasks.find(t => t.id === active.id);
+    if (!activeTask) return;
 
-    // Optimistic update
-    const updatedTasks = [...tasks];
-    const [movedTask] = updatedTasks.splice(taskIndex, 1);
-    movedTask.status = newStatus;
-    updatedTasks.splice(destination.index, 0, movedTask);
-    setTasks(updatedTasks);
+    const overId = over.id;
+    const isOverAColumn = columns.some(col => col.status === overId);
+    
+    if (isOverAColumn) {
+      const newStatus = overId as TaskStatus;
+      if (activeTask.status !== newStatus) {
+        setTasks((prev) => {
+          const updated = prev.map(t => t.id === active.id ? { ...t, status: newStatus } : t);
+          return updated;
+        });
+      }
+      return;
+    }
 
-    try {
-      await api.put(`/tasks/${draggableId}`, { status: newStatus });
-    } catch (err) {
-      toast.error('Failed to update task status');
-      fetchData(); // Rollback
+    const overTask = tasks.find(t => t.id === overId);
+    if (overTask && activeTask.status !== overTask.status) {
+      setTasks((prev) => {
+        const updated = prev.map(t => t.id === active.id ? { ...t, status: overTask.status } : t);
+        return updated;
+      });
+    }
+  };
+
+  const handleDragEnd = async (event: any) => {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over) return;
+
+    const activeTask = tasks.find(t => t.id === active.id);
+    if (!activeTask) return;
+
+    const overId = over.id;
+    let newStatus = activeTask.status;
+
+    if (columns.some(col => col.status === overId)) {
+      newStatus = overId as TaskStatus;
+    } else {
+      const overTask = tasks.find(t => t.id === overId);
+      if (overTask) {
+        newStatus = overTask.status;
+      }
+    }
+
+    if (active.id !== over.id || activeTask.status !== newStatus) {
+      const oldIndex = tasks.findIndex((t) => t.id === active.id);
+      const newIndex = tasks.findIndex((t) => t.id === over.id);
+      
+      const newTasks = arrayMove(tasks, oldIndex, newIndex);
+      setTasks(newTasks);
+
+      try {
+        await api.put(`/tasks/${active.id}`, { status: newStatus });
+      } catch (err) {
+        toast.error('Failed to update task status');
+        fetchData();
+      }
     }
   };
 
@@ -106,6 +223,8 @@ export default function ProjectPage() {
 
   if (loading) return <div className="flex h-full items-center justify-center text-white">Loading...</div>;
   if (!project) return <div className="flex h-full items-center justify-center text-white/40">Project not found</div>;
+
+  const activeTask = activeId ? tasks.find(t => t.id === activeId) : null;
 
   return (
     <div className="flex h-full flex-col">
@@ -127,7 +246,13 @@ export default function ProjectPage() {
         </div>
       </header>
 
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
         <div className="tour-kanban-board grid flex-1 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 min-h-[600px]">
           {columns.map((column) => (
             <div key={column.status} className="flex flex-col rounded-2xl bg-white/5 p-4 border border-white/5">
@@ -140,54 +265,60 @@ export default function ProjectPage() {
                 </h3>
               </div>
 
-              <Droppable droppableId={column.status}>
-                {(provided, snapshot) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className={`flex-1 space-y-4 rounded-xl transition-colors duration-200 ${snapshot.isDraggingOver ? 'bg-white/[0.02]' : ''}`}
-                  >
-                    {filteredTasks
-                      .filter((t) => t.status === column.status)
-                      .map((task, index) => (
-                        <Draggable key={task.id} draggableId={task.id} index={index}>
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              onClick={() => setSelectedTask(task)}
-                              className={`tour-task-card glass-card p-4 transition-all ${snapshot.isDragging ? 'rotate-2 scale-105 shadow-2xl z-50 border-indigo-500/50' : 'hover:border-white/20'}`}
-                            >
-                              <div className="mb-3 flex flex-wrap gap-2">
-                                {task.labels.map((label) => (
-                                  <span key={label} className="rounded-full bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium text-indigo-400">
-                                    {label}
-                                  </span>
-                                ))}
-                              </div>
-                              <h4 className="mb-3 font-medium text-white/90">{task.title}</h4>
-                              <div className="flex items-center justify-between text-[10px] text-white/40">
-                                <div className="flex items-center gap-2">
-                                  <Clock className="h-3 w-3" />
-                                  {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date'}
-                                </div>
-                                <div className="h-5 w-5 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/20">
-                                  <UserIcon className="h-2 w-2 text-indigo-400" />
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
+              <SortableContext
+                id={column.status}
+                items={filteredTasks.filter(t => t.status === column.status).map(t => t.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="flex-1 space-y-4 rounded-xl min-h-[150px]">
+                  {filteredTasks
+                    .filter((t) => t.status === column.status)
+                    .map((task, index) => (
+                      <SortableTaskCard
+                        key={task.id}
+                        task={task}
+                        index={index}
+                        onClick={setSelectedTask}
+                      />
+                    ))}
+                </div>
+              </SortableContext>
             </div>
           ))}
         </div>
-      </DragDropContext>
+
+        <DragOverlay dropAnimation={{
+          sideEffects: defaultDropAnimationSideEffects({
+            styles: {
+              active: {
+                opacity: '0.5',
+              },
+            },
+          }),
+        }}>
+          {activeTask ? (
+            <div className="glass-card p-4 rotate-2 scale-105 shadow-2xl z-50 border-indigo-500/50">
+              <div className="mb-3 flex flex-wrap gap-2">
+                {activeTask.labels.map((label) => (
+                  <span key={label} className="rounded-full bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium text-indigo-400">
+                    {label}
+                  </span>
+                ))}
+              </div>
+              <h4 className="mb-3 font-medium text-white/90">{activeTask.title}</h4>
+              <div className="flex items-center justify-between text-[10px] text-white/40">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-3 w-3" />
+                  {activeTask.dueDate ? new Date(activeTask.dueDate).toLocaleDateString() : 'No date'}
+                </div>
+                <div className="h-5 w-5 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/20">
+                  <UserIcon className="h-2 w-2 text-indigo-400" />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
 
       <TaskDetailsModal
         isOpen={!!selectedTask}
