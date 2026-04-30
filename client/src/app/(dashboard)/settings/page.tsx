@@ -16,6 +16,7 @@ import {
   Loader2,
   Trash2
 } from 'lucide-react';
+import OnboardingTour from '@/components/OnboardingTour';
 
 export default function SettingsPage() {
   const dispatch = useDispatch();
@@ -79,7 +80,7 @@ export default function SettingsPage() {
 
       <div className="grid grid-cols-1 gap-8">
         {/* Profile Settings */}
-        <section className="glass-card p-8">
+        <section className="tour-profile-settings glass-card p-8">
           <div className="mb-8 flex items-center gap-3">
             <div className="rounded-xl bg-indigo-500/20 p-2.5 text-indigo-400">
               <User className="h-6 w-6" />
@@ -121,7 +122,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Workspace Settings */}
-        <section className="glass-card p-8 border-indigo-500/10">
+        <section className="tour-workspace-settings glass-card p-8 border-indigo-500/10">
           <div className="mb-8 flex items-center gap-3">
             <div className="rounded-xl bg-purple-500/20 p-2.5 text-purple-400">
               <Building2 className="h-6 w-6" />
