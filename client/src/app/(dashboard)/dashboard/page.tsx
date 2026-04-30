@@ -13,6 +13,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import SearchBar from '@/components/ui/SearchBar';
 import QuickActionsFAB from '@/components/ui/QuickActionsFAB';
 import { ProjectCardSkeleton, StatCardSkeleton } from '@/components/ui/Skeleton';
+import OnboardingTour from '@/components/OnboardingTour';
 
 export default function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -83,6 +84,7 @@ export default function DashboardPage() {
           <SearchBar 
             onSearch={setSearchQuery} 
             placeholder="Search projects..."
+            className="tour-search-bar"
           />
           <button 
             onClick={() => setIsModalOpen(true)}
@@ -95,7 +97,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="tour-stats grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {loading ? (
           <>
             <StatCardSkeleton />
@@ -125,7 +127,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Projects Section */}
-      <section>
+      <section className="tour-projects">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold font-outfit text-white">Recent Projects</h2>
           <Link href="/projects" className="text-sm text-indigo-400 hover:underline">View All</Link>
@@ -189,7 +191,10 @@ export default function DashboardPage() {
 
       <QuickActionsFAB
         onCreateProject={() => setIsModalOpen(true)}
+        className="tour-quick-actions"
       />
+      
+      <OnboardingTour />
     </div>
   );
 }
