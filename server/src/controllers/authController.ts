@@ -44,15 +44,14 @@ export const register = async (req: Request, res: Response) => {
     if (existing) {
       return res.status(409).json({ message: 'Email already in use' });
     }
+    const verificationToken = crypto.randomBytes(32).toString('hex');
     const user = new User({
       ...data,
       role: UserRole.MEMBER,
       isEmailVerified: false,
+      emailVerificationToken: verificationToken,
+      emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
-    await user.save();
-    const verificationToken = crypto.randomBytes(32).toString('hex');
-    user.emailVerificationToken = verificationToken;
-    user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     await user.save();
     const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}&id=${user._id}`;
     
@@ -124,9 +123,11 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
 /** Login */
 export const login = async (req: Request, res: Response) => {
+  console.log('Login attempt for:', req.body?.email);
   try {
     const data = loginSchema.parse(req.body);
-    const user = await User.findOne({ email: data.email }).select('+password');
+    const user = await User.findOne({ email: data.email }).select('+password').lean();
+    console.log('User found:', user ? 'Yes' : 'No');
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -146,13 +147,23 @@ export const login = async (req: Request, res: Response) => {
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    res.json({ accessToken, user: { id: user._id, email: user.email, role: user.role } });
+    res.json({ 
+      accessToken, 
+      user: { 
+        id: user._id.toString(), 
+        email: user.email, 
+        role: user.role,
+        firstName: user.firstName,
+        lastName: user.lastName
+      } 
+    });
   } catch (err: any) {
+    console.error('CRITICAL LOGIN ERROR:', err);
     logger.error('Login error', err);
     if (err instanceof z.ZodError) {
       return res.status(400).json({ errors: err.errors });
     }
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error', details: err.message });
   }
 };
 
@@ -162,7 +173,7 @@ export const refreshToken = async (req: Request, res: Response) => {
   if (!token) return res.sendStatus(401);
   try {
     const payload = verifyRefreshToken(token);
-    const user = await User.findById(payload.id).select('+refreshToken');
+    const user = await User.findById(payload.id).select('+refreshToken').lean();
     if (!user || user.refreshToken !== token) {
       return res.sendStatus(403);
     }
@@ -188,7 +199,7 @@ export const logout = async (req: Request, res: Response) => {
   if (token) {
     try {
       const payload = verifyRefreshToken(token);
-      const user = await User.findById(payload.id).select('+refreshToken');
+    const user = await User.findById(payload.id).select('+refreshToken').lean();
       if (user && user.refreshToken === token) {
         await User.updateOne({ _id: user._id }, { $unset: { refreshToken: 1 } });
       }
@@ -200,6 +211,17 @@ export const logout = async (req: Request, res: Response) => {
     sameSite: 'strict',
   });
   res.json({ message: 'Logged out' });
+};
+
+export const getProfile = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById((req as any).user.id).lean();
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    logger.error('Get profile error', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 export const updateProfile = async (req: Request, res: Response) => {
