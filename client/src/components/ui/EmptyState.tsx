@@ -27,7 +27,7 @@ const emptyStates = {
   },
   dashboard: {
     icon: Rocket,
-    title: 'Welcome to TaskFlow Pro X',
+    title: 'Welcome to KanuTech Pro',
     description: 'Get started by creating your first workspace and project.',
   },
 };
