@@ -7,9 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface SearchBarProps {
   onSearch: (query: string) => void;
   placeholder?: string;
+  className?: string;
 }
 
-export default function SearchBar({ onSearch, placeholder = 'Search projects, tasks, team...' }: SearchBarProps) {
+export default function SearchBar({ onSearch, placeholder = 'Search projects, tasks, team...', className = '' }: SearchBarProps) {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
@@ -24,7 +25,7 @@ export default function SearchBar({ onSearch, placeholder = 'Search projects, ta
   };
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className={`relative w-full max-w-md ${className}`}>
       <motion.div
         animate={{ 
           borderColor: isFocused ? 'rgba(99, 102, 241, 0.5)' : 'rgba(255, 255, 255, 0.1)',

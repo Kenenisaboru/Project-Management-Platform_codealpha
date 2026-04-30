@@ -8,9 +8,10 @@ interface QuickActionsFABProps {
   onCreateProject?: () => void;
   onCreateTask?: () => void;
   onInviteTeam?: () => void;
+  className?: string;
 }
 
-export default function QuickActionsFAB({ onCreateProject, onCreateTask, onInviteTeam }: QuickActionsFABProps) {
+export default function QuickActionsFAB({ onCreateProject, onCreateTask, onInviteTeam, className = '' }: QuickActionsFABProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const actions = [
@@ -20,7 +21,7 @@ export default function QuickActionsFAB({ onCreateProject, onCreateTask, onInvit
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className={`fixed bottom-6 right-6 z-50 ${className}`}>
       <AnimatePresence>
         {isOpen && (
           <motion.div
