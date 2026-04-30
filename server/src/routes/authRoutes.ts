@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, verifyEmail, refreshToken, logout, updateProfile } from '../controllers/authController';
+import { register, login, verifyEmail, refreshToken, logout, updateProfile, getProfile } from '../controllers/authController';
 import { protect } from '../utils/jwt';
 
 const router = Router();
@@ -10,6 +10,7 @@ router.get('/verify-email', verifyEmail);
 router.post('/verify-email', verifyEmail);
 router.post('/refresh', refreshToken);
 router.post('/logout', logout);
+router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfile);
 
 export default router;
