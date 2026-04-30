@@ -30,6 +30,8 @@ const envOrigins = (process.env.CLIENT_URL || '')
 const allowedOrigins = Array.from(new Set([
   'http://localhost:3000',
   'http://localhost:3001',
+  'http://192.168.137.89:3000',
+  'http://192.168.137.89:3001',
   ...envOrigins,
 ]));
 
