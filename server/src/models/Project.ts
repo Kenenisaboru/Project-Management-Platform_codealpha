@@ -30,6 +30,15 @@ const ProjectSchema = new Schema<IProject>(
   { timestamps: true }
 );
 
+ProjectSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret: any) => {
+    ret.id = ret._id;
+    delete ret._id;
+  }
+});
+
 ProjectSchema.index({ workspaceId: 1 });
 ProjectSchema.index({ ownerId: 1 });
 
