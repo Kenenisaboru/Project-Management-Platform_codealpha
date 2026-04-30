@@ -62,7 +62,7 @@ export const register = async (req: Request, res: Response) => {
         await transporter.sendMail({
           from: process.env.SMTP_FROM || 'no-reply@taskflow.pro',
           to: user.email,
-          subject: 'Verify your TaskFlow Pro X account',
+          subject: 'Verify your KanuTech Pro account',
           html: `<p>Hello ${user.firstName},</p><p>Please verify your account by clicking <a href="${verifyUrl}">this link</a>.</p>`,
         });
         logger.info(`Verification email sent to ${user.email}`);
