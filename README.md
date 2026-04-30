@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/TaskFlow-Pro_X-6366f1?style=for-the-badge&logo=react" alt="TaskFlow Pro X Logo" />
-  <h1>🚀 TaskFlow Pro X</h1>
+  <img src="https://img.shields.io/badge/KanuTech-Pro-00A8E8?style=for-the-badge&logo=react" alt="KanuTech Pro Logo" />
+  <h1>🚀 KanuTech Pro</h1>
   <p><strong>The Enterprise Work OS & Next-Generation Collaborative Project Management Platform</strong></p>
   
   <p>
@@ -17,7 +17,7 @@
 
 ## 🌟 Overview
 
-**TaskFlow Pro X** is an elite, full-stack project management platform engineered to mirror the complexity, scalability, and aesthetic polish of enterprise software like Jira, Asana, and Monday.com. 
+**KanuTech Pro** is an elite, full-stack project management platform engineered to mirror the complexity, scalability, and aesthetic polish of enterprise software like Jira, Asana, and Monday.com. 
 
 Built with a heavy emphasis on a premium **Glassmorphism UI** and **dynamic micro-animations**, it provides teams with a stunning, real-time environment to track tasks, manage workflows, and analyze performance.
 
@@ -53,7 +53,7 @@ Built with a heavy emphasis on a premium **Glassmorphism UI** and **dynamic micr
 
 ## 🚀 Getting Started
 
-Follow these steps to run TaskFlow Pro X locally on your machine.
+Follow these steps to run KanuTech Pro locally on your machine.
 
 ### Prerequisites
 - Node.js (v18 or higher)
@@ -105,8 +105,22 @@ npm run dev
 ---
 
 ## 📸 Screenshots
-*(Coming Soon!)*
-<!-- Add screenshots of your Kanban Board, Admin Dashboard, and Analytics charts here -->
+
+Here is a look at the KanuTech Pro premium interface in action:
+
+### Landing Page & Features
+![Landing Page & Features](./screenshots/landing-hero.png)
+<br/>
+![Features Detail](./screenshots/landing-features.png)
+
+### Dashboard Overview
+![Dashboard Overview](./screenshots/dashboard.png)
+
+### My Tasks
+![My Tasks](./screenshots/my-tasks.png)
+
+### Settings & Profile
+![Settings](./screenshots/settings.png)
 
 ---
 
