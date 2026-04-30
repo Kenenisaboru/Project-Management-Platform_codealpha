@@ -23,7 +23,6 @@ interface AnalyticsChartsProps {
     taskDistribution: { name: string; value: number; color: string }[];
     projectProgress: { name: string; progress: number }[];
     activityOverTime: { date: string; tasks: number }[];
-    efficiency: { name: string; value: number }[];
   };
 }
 
