@@ -44,9 +44,7 @@ export default function LoginPage() {
       const response = await api.post('/auth/login', data);
       dispatch(setCredentials(response.data));
       setSuccess(true);
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1000);
+      router.replace('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');
     } finally {
