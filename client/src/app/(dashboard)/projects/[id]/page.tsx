@@ -10,6 +10,7 @@ import { Project, Task, TaskStatus, TaskPriority } from '@/lib/shared/types';
 import { Plus, MoreVertical, Calendar, User as UserIcon, Clock, Filter, X, Zap } from 'lucide-react';
 import TaskDetailsModal from '@/components/ui/TaskDetailsModal';
 import { toast } from 'sonner';
+import OnboardingTour from '@/components/OnboardingTour';
 
 const columns: { title: string; status: TaskStatus }[] = [
   { title: 'To Do', status: TaskStatus.TODO },
@@ -127,7 +128,7 @@ export default function ProjectPage() {
       </header>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="grid flex-1 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 min-h-[600px]">
+        <div className="tour-kanban-board grid flex-1 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 min-h-[600px]">
           {columns.map((column) => (
             <div key={column.status} className="flex flex-col rounded-2xl bg-white/5 p-4 border border-white/5">
               <div className="mb-4 flex items-center justify-between px-2">
@@ -156,7 +157,7 @@ export default function ProjectPage() {
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                               onClick={() => setSelectedTask(task)}
-                              className={`glass-card p-4 transition-all ${snapshot.isDragging ? 'rotate-2 scale-105 shadow-2xl z-50 border-indigo-500/50' : 'hover:border-white/20'}`}
+                              className={`tour-task-card glass-card p-4 transition-all ${snapshot.isDragging ? 'rotate-2 scale-105 shadow-2xl z-50 border-indigo-500/50' : 'hover:border-white/20'}`}
                             >
                               <div className="mb-3 flex flex-wrap gap-2">
                                 {task.labels.map((label) => (
@@ -193,6 +194,8 @@ export default function ProjectPage() {
         onClose={() => setSelectedTask(null)}
         task={selectedTask}
       />
+      
+      <OnboardingTour />
     </div>
   );
 }
