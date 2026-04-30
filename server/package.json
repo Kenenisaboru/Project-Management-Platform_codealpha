@@ -1,7 +1,7 @@
 {
   "name": "taskflow-server",
   "version": "1.0.0",
-  "description": "TaskFlow Pro X Backend Engine",
+  "description": "KanuTech Pro Backend Engine",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
