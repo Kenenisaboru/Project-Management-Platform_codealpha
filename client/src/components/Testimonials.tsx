@@ -5,7 +5,7 @@ import { Star } from 'lucide-react';
 
 const testimonials = [
   {
-    content: '"TaskFlow Pro X transformed how our team collaborates. The real-time updates and intuitive interface increased our productivity by 40%."',
+    content: '"KanuTech Pro transformed how our team collaborates. The real-time updates and intuitive interface increased our productivity by 40%."',
     author: 'Sarah Chen',
     role: 'CTO at TechFlow',
     avatar: 'SC',
