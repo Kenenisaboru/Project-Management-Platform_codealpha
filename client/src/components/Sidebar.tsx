@@ -102,7 +102,7 @@ export default function Sidebar() {
           <div className="mb-10 flex items-center justify-between px-2">
             <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#00A8E8] to-[#88C057] shadow-lg shadow-black/20 overflow-hidden">
-              <img src="http://192.168.137.89:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-xl font-bold text-white">K</span>'; }} />
+              <img src="/kanutech-logo.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-xl font-bold text-white">K</span>'; }} />
             </div>  <span className="font-outfit text-xl font-bold tracking-tight text-white">KanuTech Pro</span>
             </Link>
             <button
