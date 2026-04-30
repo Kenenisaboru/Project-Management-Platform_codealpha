@@ -27,36 +27,6 @@ import { jsPDF } from 'jspdf';
 import { Download, FileText, Image as ImageIcon } from 'lucide-react';
 import { toast } from '@/components/ui/Toast';
 
-// Mock data for analytics
-const analyticsData = {
-  taskDistribution: [
-    { name: 'To Do', value: 35, color: '#94a3b8' },
-    { name: 'In Progress', value: 25, color: '#6366f1' },
-    { name: 'Review', value: 20, color: '#a855f7' },
-    { name: 'Done', value: 20, color: '#10b981' },
-  ],
-  projectProgress: [
-    { name: 'Project A', progress: 75 },
-    { name: 'Project B', progress: 45 },
-    { name: 'Project C', progress: 90 },
-    { name: 'Project D', progress: 30 },
-  ],
-  activityOverTime: [
-    { date: 'Mon', tasks: 12 },
-    { date: 'Tue', tasks: 18 },
-    { date: 'Wed', tasks: 15 },
-    { date: 'Thu', tasks: 25 },
-    { date: 'Fri', tasks: 22 },
-    { date: 'Sat', tasks: 10 },
-    { date: 'Sun', tasks: 8 },
-  ],
-  efficiency: [
-    { name: 'Week 1', value: 85 },
-    { name: 'Week 2', value: 92 },
-    { name: 'Week 3', value: 88 },
-    { name: 'Week 4', value: 95 },
-  ],
-};
 
 export default function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -104,7 +74,10 @@ export default function DashboardPage() {
     totalTasks: 0,
     completedTasks: 0,
     pendingTasks: 0,
-    efficiency: 0
+    efficiency: 0,
+    taskDistribution: [] as { name: string; value: number; color: string }[],
+    projectProgress: [] as { name: string; progress: number }[],
+    activityOverTime: [] as { date: string; tasks: number }[],
   });
 
   const fetchProjects = async () => {
@@ -236,7 +209,11 @@ export default function DashboardPage() {
             </div>
           </div>
           <div id="analytics-section">
-            <AnalyticsCharts data={analyticsData} />
+            <AnalyticsCharts data={{
+              taskDistribution: stats.taskDistribution,
+              projectProgress: stats.projectProgress,
+              activityOverTime: stats.activityOverTime,
+            }} />
           </div>
         </section>
       )}
@@ -279,7 +256,7 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-4 text-xs text-white/30">
                     <span className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      Updated 2h ago
+                      {new Date(project.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
                   </div>
                 </motion.div>
