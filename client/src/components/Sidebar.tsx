@@ -24,7 +24,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { logout } from '@/lib/features/auth/authSlice';
-import { setWorkspaces, setCurrentWorkspace } from '@/lib/features/workspace/workspaceSlice';
+import { setWorkspaces, setCurrentWorkspace, setLoading } from '@/lib/features/workspace/workspaceSlice';
 import api from '@/lib/api';
 import CreateWorkspaceModal from './ui/CreateWorkspaceModal';
 

@@ -4,9 +4,11 @@ import { motion } from 'framer-motion';
 import { Plus, FolderKanban, CheckSquare, Users, Rocket } from 'lucide-react';
 
 interface EmptyStateProps {
-  type: 'projects' | 'tasks' | 'team' | 'dashboard';
+  type: 'projects' | 'tasks' | 'team' | 'dashboard' | 'workspaces';
   onCreate?: () => void;
   actionLabel?: string;
+  title?: string;
+  description?: string;
 }
 
 const emptyStates = {
@@ -30,11 +32,18 @@ const emptyStates = {
     title: 'Welcome to KanuTech Pro',
     description: 'Get started by creating your first workspace and project.',
   },
+  workspaces: {
+    icon: Rocket,
+    title: 'No Workspace Selected',
+    description: 'Please create or select a workspace to start managing your projects.',
+  },
 };
 
-export default function EmptyState({ type, onCreate, actionLabel }: EmptyStateProps) {
+export default function EmptyState({ type, onCreate, actionLabel, title, description }: EmptyStateProps) {
   const config = emptyStates[type];
   const Icon = config.icon;
+  const displayTitle = title || config.title;
+  const displayDescription = description || config.description;
 
   return (
     <motion.div
@@ -45,8 +54,8 @@ export default function EmptyState({ type, onCreate, actionLabel }: EmptyStatePr
       <div className="mb-6 rounded-full bg-white/5 p-6 border border-white/10">
         <Icon className="h-12 w-12 text-indigo-400" />
       </div>
-      <h3 className="mb-2 text-xl font-semibold text-white">{config.title}</h3>
-      <p className="mb-8 max-w-md text-sm text-white/50">{config.description}</p>
+      <h3 className="mb-2 text-xl font-semibold text-white">{displayTitle}</h3>
+      <p className="mb-8 max-w-md text-sm text-white/50">{displayDescription}</p>
       {onCreate && (
         <button
           onClick={onCreate}
