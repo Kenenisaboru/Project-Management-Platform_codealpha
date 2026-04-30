@@ -38,6 +38,15 @@ const TaskSchema = new Schema<ITask>(
   { timestamps: true }
 );
 
+TaskSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret: any) => {
+    ret.id = ret._id;
+    delete ret._id;
+  }
+});
+
 TaskSchema.index({ projectId: 1 });
 TaskSchema.index({ assigneeId: 1 });
 TaskSchema.index({ status: 1 });
