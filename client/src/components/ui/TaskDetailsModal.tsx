@@ -1,8 +1,18 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, User as UserIcon, Tag, MessageSquare, Paperclip, Edit2, Trash2 } from 'lucide-react';
+import { X, Calendar, User as UserIcon, Tag, MessageSquare, Paperclip, Edit2, Trash2, Send } from 'lucide-react';
 import { Task, TaskPriority, TaskStatus } from '@/lib/shared/types';
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+interface Comment {
+  id: string;
+  userId: string;
+  userName: string;
+  content: string;
+  createdAt: string;
+}
 
 interface TaskDetailsModalProps {
   isOpen: boolean;
@@ -26,6 +36,34 @@ const statusColors = {
 };
 
 export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsModalProps) {
+  const [comment, setComment] = useState('');
+  const [comments, setComments] = useState<Comment[]>([
+    {
+      id: '1',
+      userId: 'user1',
+      userName: 'John Doe',
+      content: 'This task is progressing well. Let me know if you need any help.',
+      createdAt: new Date(Date.now() - 7200000).toISOString(),
+    },
+  ]);
+
+  const handleAddComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!comment.trim()) return;
+
+    const newComment: Comment = {
+      id: Math.random().toString(36).substr(2, 9),
+      userId: 'me',
+      userName: 'You',
+      content: comment,
+      createdAt: new Date().toISOString(),
+    };
+
+    setComments([...comments, newComment]);
+    setComment('');
+    toast.success('Comment added');
+  };
+
   if (!task) return null;
 
   return (
@@ -114,24 +152,42 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
                     Comments
                   </h3>
                   <div className="space-y-3">
-                    <div className="rounded-xl bg-white/5 p-4 border border-white/10">
-                      <div className="mb-2 flex items-center gap-2">
-                        <div className="h-6 w-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-xs font-bold text-indigo-400">
-                          JD
+                    {comments.map((c) => (
+                      <motion.div
+                        key={c.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="rounded-xl bg-white/5 p-4 border border-white/10"
+                      >
+                        <div className="mb-2 flex items-center gap-2">
+                          <div className="h-6 w-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-xs font-bold text-indigo-400">
+                            {c.userName.charAt(0)}
+                          </div>
+                          <span className="text-sm font-medium text-white">{c.userName}</span>
+                          <span className="text-xs text-white/40">
+                            {new Date(c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
                         </div>
-                        <span className="text-sm font-medium text-white">John Doe</span>
-                        <span className="text-xs text-white/40">2h ago</span>
-                      </div>
-                      <p className="text-sm text-white/70">This task is progressing well. Let me know if you need any help.</p>
-                    </div>
+                        <p className="text-sm text-white/70">{c.content}</p>
+                      </motion.div>
+                    ))}
                   </div>
-                  <div className="mt-3">
+                  <form onSubmit={handleAddComment} className="mt-4 relative">
                     <input
                       type="text"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
                       placeholder="Add a comment..."
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-indigo-500 focus:outline-none transition-all"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 pl-4 pr-12 py-3 text-sm text-white placeholder:text-white/40 focus:border-indigo-500 focus:outline-none transition-all"
                     />
-                  </div>
+                    <button
+                      type="submit"
+                      disabled={!comment.trim()}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-indigo-400 hover:text-indigo-300 disabled:text-white/20 transition-colors"
+                    >
+                      <Send className="h-4 w-4" />
+                    </button>
+                  </form>
                 </div>
               </div>
 
