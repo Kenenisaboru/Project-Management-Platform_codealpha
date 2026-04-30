@@ -138,8 +138,7 @@ export const login = async (req: Request, res: Response) => {
     const accessToken = generateAccessToken({ id: user._id, role: user.role });
     const refreshToken = generateRefreshToken({ id: user._id });
     // Store refresh token (hashed) – simple store here
-    user.refreshToken = refreshToken;
-    await user.save();
+    await User.updateOne({ _id: user._id }, { refreshToken });
     // Set HttpOnly cookie for refresh token
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -169,8 +168,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     }
     const newAccess = generateAccessToken({ id: user._id, role: user.role });
     const newRefresh = generateRefreshToken({ id: user._id });
-    user.refreshToken = newRefresh;
-    await user.save();
+    await User.updateOne({ _id: user._id }, { refreshToken: newRefresh });
     res.cookie('refreshToken', newRefresh, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -192,8 +190,7 @@ export const logout = async (req: Request, res: Response) => {
       const payload = verifyRefreshToken(token);
       const user = await User.findById(payload.id).select('+refreshToken');
       if (user && user.refreshToken === token) {
-        user.refreshToken = undefined;
-        await user.save();
+        await User.updateOne({ _id: user._id }, { $unset: { refreshToken: 1 } });
       }
     } catch (_) {}
   }
