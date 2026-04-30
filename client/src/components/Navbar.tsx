@@ -10,7 +10,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#00A8E8] to-[#88C057] shadow-[0_0_15px_rgba(0,168,232,0.4)] transition-transform group-hover:scale-105 group-hover:rotate-3 group-hover:shadow-[0_0_25px_rgba(136,192,87,0.6)] overflow-hidden">
-            <img src="http://localhost:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-xl">K</span>'; }} />
+            <img src="http://192.168.137.89:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-xl">K</span>'; }} />
           </div>
           <span className="font-outfit text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 hidden sm:block transition-colors group-hover:text-white">
             KanuTech Pro
