@@ -116,11 +116,11 @@ export default function RegisterPage() {
           {/* Logo for mobile */}
           <div className="lg:hidden mb-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                <span className="text-2xl font-bold text-white">T</span>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#00A8E8] to-[#88C057] shadow-lg overflow-hidden">
+                <img src="http://localhost:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-2xl">K</span>'; }} />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">TaskFlow Pro X</h1>
+                <h1 className="text-2xl font-bold text-white">KanuTech Pro</h1>
                 <p className="text-sm text-white/60">Enterprise Work OS</p>
               </div>
             </div>
