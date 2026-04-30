@@ -26,7 +26,7 @@ import { socket } from '@/lib/socket';
 import { Project, Task, TaskStatus, TaskPriority } from '@/lib/shared/types';
 import { Plus, MoreVertical, Calendar, User as UserIcon, Clock, Filter, X, Zap } from 'lucide-react';
 import TaskDetailsModal from '@/components/ui/TaskDetailsModal';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/Toast';
 import OnboardingTour from '@/components/OnboardingTour';
 
 const columns: { title: string; status: TaskStatus }[] = [
