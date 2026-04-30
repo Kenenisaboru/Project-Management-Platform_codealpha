@@ -148,45 +148,6 @@ export default function Home() {
           ))}
         </motion.div>
 
-        {/* Testimonials Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="mt-32 w-full max-w-6xl"
-        >
-          <h2 className="mb-12 font-outfit text-4xl font-bold text-white">
-            Loved by <span className="text-indigo-400">elite teams</span>
-          </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="glass-card p-6 text-left"
-              >
-                <div className="mb-4 flex gap-1">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="mb-6 text-sm text-white/70 leading-relaxed">"{testimonial.content}"</p>
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm font-bold text-white">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">{testimonial.name}</p>
-                    <p className="text-xs text-white/50">{testimonial.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
         {/* Pricing Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -248,9 +209,6 @@ export default function Home() {
             ))}
           </div>
         </motion.div>
-
-        {/* Social Proof */}
-        <Testimonials />
 
         {/* Collaboration Section */}
         <Collaboration />

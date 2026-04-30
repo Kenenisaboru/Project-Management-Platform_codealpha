@@ -1,7 +1,7 @@
 'use client';
 
-import { Joyride, Step, CallBackProps, STATUS } from 'react-joyride';
-import { useState, useCallback } from 'react';
+import { Joyride, Step, EventData, STATUS } from 'react-joyride';
+import { useState, useCallback, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 interface TourStep extends Step {
@@ -83,11 +83,16 @@ const TOUR_STEPS: Record<string, TourStep[]> = {
 export default function OnboardingTour() {
   const [run, setRun] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const currentSteps = TOUR_STEPS[pathname] || [];
 
-  const handleJoyrideCallback = useCallback((data: CallBackProps) => {
+  const handleJoyrideCallback = useCallback((data: EventData) => {
     const { status, type } = data;
     const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
 
@@ -119,33 +124,28 @@ export default function OnboardingTour() {
   }, []);
 
   // Check if tour should run for first-time users
-  const shouldRunTour = !localStorage.getItem(`tour-completed-${pathname}`) && currentSteps.length > 0;
+  const shouldRunTour = !mounted ? false : (!localStorage.getItem(`tour-completed-${pathname}`) && currentSteps.length > 0);
 
-  // Expose tour controls globally
-  if (typeof window !== 'undefined') {
-    (window as any).startTour = startTour;
-    (window as any).skipTour = skipTour;
-  }
+  if (!mounted) return null;
 
   return (
     <>
       <Joyride
         steps={currentSteps}
         run={run || shouldRunTour}
-        callback={handleJoyrideCallback}
+        onEvent={handleJoyrideCallback}
         continuous={true}
-        showProgress={true}
-        showSkipButton={true}
         stepIndex={stepIndex}
+        options={{
+          arrowColor: '#fff',
+          backgroundColor: '#1f2937',
+          buttons: ['back', 'primary', 'skip'],
+          primaryColor: '#6366f1',
+          textColor: '#fff',
+          zIndex: 1000,
+        }}
         styles={{
-          options: {
-            arrowColor: '#fff',
-            backgroundColor: '#1f2937',
-            primaryColor: '#6366f1',
-            textColor: '#fff',
-            zIndex: 1000,
-          },
-          buttonNext: {
+          buttonPrimary: {
             backgroundColor: '#6366f1',
             borderRadius: '0.5rem',
             fontSize: '0.875rem',
@@ -182,9 +182,6 @@ export default function OnboardingTour() {
           },
           overlay: {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-          spotlight: {
-            borderRadius: '0.5rem',
           },
         }}
         locale={{

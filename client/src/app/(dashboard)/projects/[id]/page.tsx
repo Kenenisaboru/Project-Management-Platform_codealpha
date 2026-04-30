@@ -27,7 +27,11 @@ import { Project, Task, TaskStatus, TaskPriority } from '@/lib/shared/types';
 import { Plus, MoreVertical, Calendar, User as UserIcon, Clock, Filter, X, Zap } from 'lucide-react';
 import TaskDetailsModal from '@/components/ui/TaskDetailsModal';
 import { toast } from '@/components/ui/Toast';
-import OnboardingTour from '@/components/OnboardingTour';
+import dynamic from 'next/dynamic';
+
+const OnboardingTour = dynamic(() => import('@/components/OnboardingTour'), {
+  ssr: false,
+});
 
 const columns: { title: string; status: TaskStatus }[] = [
   { title: 'To Do', status: TaskStatus.TODO },

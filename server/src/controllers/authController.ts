@@ -20,6 +20,11 @@ const loginSchema = z.object({
   password: z.string().min(8),
 });
 
+const verifyEmailSchema = z.object({
+  token: z.string().min(1),
+  id: z.string().min(1),
+});
+
 // Email transporter – in production use SendGrid/Mailgun via env vars
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -45,10 +50,9 @@ export const register = async (req: Request, res: Response) => {
       isEmailVerified: false,
     });
     await user.save();
-    // Send verification email (simple token)
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    // Store token in user (for demo we use refreshToken field – replace with proper collection in prod)
-    user.refreshToken = verificationToken; // quick placeholder
+    user.emailVerificationToken = verificationToken;
+    user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     await user.save();
     const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}&id=${user._id}`;
     
@@ -80,6 +84,41 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ errors: err.errors });
     }
     res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+/** Verify email */
+export const verifyEmail = async (req: Request, res: Response) => {
+  try {
+    const parsed = verifyEmailSchema.safeParse({
+      token: req.query.token ?? req.body?.token,
+      id: req.query.id ?? req.body?.id,
+    });
+
+    if (!parsed.success) {
+      return res.status(400).json({ message: 'Invalid verification payload' });
+    }
+
+    const { token, id } = parsed.data;
+    const user = await User.findById(id).select('+emailVerificationToken +emailVerificationExpires');
+
+    if (!user || !user.emailVerificationToken || user.emailVerificationToken !== token) {
+      return res.status(400).json({ message: 'Invalid verification token' });
+    }
+
+    if (!user.emailVerificationExpires || user.emailVerificationExpires < new Date()) {
+      return res.status(400).json({ message: 'Verification token expired' });
+    }
+
+    user.isEmailVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpires = undefined;
+    await user.save();
+
+    return res.status(200).json({ message: 'Email verified successfully' });
+  } catch (err) {
+    logger.error('Verify email error', err);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -124,7 +163,7 @@ export const refreshToken = async (req: Request, res: Response) => {
   if (!token) return res.sendStatus(401);
   try {
     const payload = verifyRefreshToken(token);
-    const user = await User.findById(payload.id);
+    const user = await User.findById(payload.id).select('+refreshToken');
     if (!user || user.refreshToken !== token) {
       return res.sendStatus(403);
     }
@@ -151,10 +190,18 @@ export const logout = async (req: Request, res: Response) => {
   if (token) {
     try {
       const payload = verifyRefreshToken(token);
-      await User.findByIdAndUpdate(payload.id, { $unset: { refreshToken: '' } });
+      const user = await User.findById(payload.id).select('+refreshToken');
+      if (user && user.refreshToken === token) {
+        user.refreshToken = undefined;
+        await user.save();
+      }
     } catch (_) {}
   }
-  res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'strict' });
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  });
   res.json({ message: 'Logged out' });
 };
 

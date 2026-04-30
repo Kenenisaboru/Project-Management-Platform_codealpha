@@ -90,20 +90,20 @@ export default function ToastContainer() {
   return (
     <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
       <AnimatePresence>
-        {toastList.map((toast) => {
-          const Icon = icons[toast.type];
+        {toastList.map((item) => {
+          const Icon = icons[item.type];
           return (
             <motion.div
-              key={toast.id}
+              key={item.id}
               initial={{ opacity: 0, x: 100, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 100, scale: 0.9 }}
-              className={`flex items-center gap-3 rounded-xl border px-4 py-3 shadow-xl backdrop-blur-xl ${colors[toast.type]}`}
+              className={`flex items-center gap-3 rounded-xl border px-4 py-3 shadow-xl backdrop-blur-xl ${colors[item.type]}`}
             >
               <Icon className="h-5 w-5 shrink-0" />
-              <p className="text-sm font-medium">{toast.message}</p>
+              <p className="text-sm font-medium">{item.message}</p>
               <button
-                onClick={() => toast.remove(toast.id)}
+                onClick={() => toast.remove(item.id)}
                 className="ml-2 shrink-0 opacity-60 hover:opacity-100 transition-opacity"
               >
                 <X className="h-4 w-4" />

@@ -13,8 +13,15 @@ import EmptyState from '@/components/ui/EmptyState';
 import SearchBar from '@/components/ui/SearchBar';
 import QuickActionsFAB from '@/components/ui/QuickActionsFAB';
 import { ProjectCardSkeleton, StatCardSkeleton } from '@/components/ui/Skeleton';
-import OnboardingTour from '@/components/OnboardingTour';
-import AnalyticsCharts from '@/components/ui/AnalyticsCharts';
+import dynamic from 'next/dynamic';
+
+const OnboardingTour = dynamic(() => import('@/components/OnboardingTour'), {
+  ssr: false,
+});
+
+const AnalyticsCharts = dynamic(() => import('@/components/ui/AnalyticsCharts'), {
+  ssr: false,
+});
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { Download, FileText, Image as ImageIcon } from 'lucide-react';

@@ -19,6 +19,8 @@ export interface IUser extends Document {
   avatarUrl?: string;
   organizationId?: mongoose.Types.ObjectId;
   isEmailVerified: boolean;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
   refreshToken?: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
@@ -40,6 +42,8 @@ const UserSchema = new Schema<IUser>(
     avatarUrl: { type: String, default: '' },
     organizationId: { type: Schema.Types.ObjectId, ref: 'Organization' },
     isEmailVerified: { type: Boolean, default: false },
+    emailVerificationToken: { type: String, select: false },
+    emailVerificationExpires: { type: Date, select: false },
     refreshToken: { type: String, select: false },
     resetPasswordToken: { type: String, select: false },
     resetPasswordExpires: { type: Date, select: false },
@@ -52,6 +56,8 @@ const UserSchema = new Schema<IUser>(
       virtuals: true,
       transform: function (_doc, ret: any) {
         delete ret.password;
+        delete ret.emailVerificationToken;
+        delete ret.emailVerificationExpires;
         delete ret.refreshToken;
         delete ret.__v;
         return ret;
