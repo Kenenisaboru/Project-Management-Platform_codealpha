@@ -132,22 +132,62 @@ export const updateWorkspace = async (req: Request, res: Response) => {
 export const getWorkspaceStats = async (req: Request, res: Response) => {
   try {
     const workspaceId = req.params.id;
-    const user = (req as any).user;
 
     const projects = await (mongoose.model('Project') as any).find({ workspaceId });
     const projectIds = projects.map((p: any) => p._id);
-
     const tasks = await (mongoose.model('Task') as any).find({ projectId: { $in: projectIds } });
 
+    // Core stats
+    const completedTasks = tasks.filter((t: any) => t.status === 'DONE').length;
     const stats = {
       activeProjects: projects.length,
       totalTasks: tasks.length,
-      completedTasks: tasks.filter((t: any) => t.status === 'DONE').length,
+      completedTasks,
       pendingTasks: tasks.filter((t: any) => t.status !== 'DONE').length,
-      efficiency: tasks.length > 0 ? Math.round((tasks.filter((t: any) => t.status === 'DONE').length / tasks.length) * 100) : 0
+      efficiency: tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0,
     };
 
-    res.json(stats);
+    // Task distribution by status (for Pie chart)
+    const statusColors: Record<string, string> = {
+      BACKLOG: '#94a3b8', TODO: '#64748b', IN_PROGRESS: '#6366f1',
+      REVIEW: '#a855f7', DONE: '#10b981',
+    };
+    const statusCounts: Record<string, number> = {};
+    tasks.forEach((t: any) => { statusCounts[t.status] = (statusCounts[t.status] || 0) + 1; });
+    const taskDistribution = Object.entries(statusCounts).map(([status, value]) => ({
+      name: status.replace('_', ' '),
+      value,
+      color: statusColors[status] || '#6366f1',
+    }));
+
+    // Project progress (tasks done / total per project) for Bar chart
+    const projectProgress = await Promise.all(
+      projects.slice(0, 6).map(async (p: any) => {
+        const ptasks = tasks.filter((t: any) => t.projectId.toString() === p._id.toString());
+        const done = ptasks.filter((t: any) => t.status === 'DONE').length;
+        return {
+          name: p.name.length > 12 ? p.name.slice(0, 12) + '…' : p.name,
+          progress: ptasks.length > 0 ? Math.round((done / ptasks.length) * 100) : 0,
+        };
+      })
+    );
+
+    // 7-day activity trend (tasks created per day)
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const now = new Date();
+    const activityOverTime = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(now);
+      d.setDate(now.getDate() - (6 - i));
+      const dayStart = new Date(d.setHours(0, 0, 0, 0));
+      const dayEnd = new Date(d.setHours(23, 59, 59, 999));
+      const count = tasks.filter((t: any) => {
+        const created = new Date(t.createdAt);
+        return created >= dayStart && created <= dayEnd;
+      }).length;
+      return { date: days[dayStart.getDay()], tasks: count };
+    });
+
+    res.json({ ...stats, taskDistribution, projectProgress, activityOverTime });
   } catch (err) {
     logger.error('Get stats error', err);
     res.status(500).json({ message: 'Internal server error' });
