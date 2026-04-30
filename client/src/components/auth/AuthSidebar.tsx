@@ -41,11 +41,11 @@ export default function AuthSidebar() {
           className="mb-12"
         >
           <div className="flex items-center gap-3 text-white">
-            <div className="h-12 w-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-              <span className="text-2xl font-bold">T</span>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#00A8E8] to-[#88C057] shadow-lg overflow-hidden">
+              <img src="http://localhost:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-2xl">K</span>'; }} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">TaskFlow Pro X</h1>
+              <h1 className="text-2xl font-bold">KanuTech Pro</h1>
               <p className="text-sm text-white/80">Enterprise Work OS</p>
             </div>
           </div>
@@ -79,7 +79,7 @@ export default function AuthSidebar() {
           transition={{ delay: 0.2 }}
           className="mb-12"
         >
-          <h2 className="text-xl font-semibold text-white mb-6">Why Choose TaskFlow Pro X?</h2>
+          <h2 className="text-xl font-semibold text-white mb-6">Why Choose KanuTech Pro?</h2>
           <div className="grid grid-cols-2 gap-4">
             {features.map((feature, index) => (
               <motion.div
@@ -131,7 +131,7 @@ export default function AuthSidebar() {
           <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-6">
             <h3 className="text-lg font-semibold text-white mb-3">Ready to get started?</h3>
             <p className="text-sm text-white/80 mb-4">
-              Join thousands of teams already using TaskFlow Pro X to accelerate their workflow.
+              Join thousands of teams already using KanuTech Pro to accelerate their workflow.
             </p>
             <button className="w-full flex items-center justify-center gap-2 rounded-xl bg-white text-indigo-600 px-6 py-3 font-semibold hover:bg-white/90 transition-all">
               Start Free Trial
