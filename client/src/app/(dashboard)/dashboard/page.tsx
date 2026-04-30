@@ -18,6 +18,7 @@ import AnalyticsCharts from '@/components/ui/AnalyticsCharts';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { Download, FileText, Image as ImageIcon } from 'lucide-react';
+import { toast } from '@/components/ui/Toast';
 
 // Mock data for analytics
 const analyticsData = {
