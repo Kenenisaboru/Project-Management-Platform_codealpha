@@ -41,11 +41,11 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="space-y-6">
             <Link href="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
-                T
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#00A8E8] to-[#88C057] font-bold text-white shadow-lg overflow-hidden">
+                <img src="http://localhost:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-xl">K</span>'; }} />
               </div>
               <span className="font-outfit text-2xl font-bold tracking-tight text-white">
-                TaskFlow Pro
+                KanuTech Pro
               </span>
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-white/50">
@@ -82,7 +82,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-24 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-12 sm:flex-row">
           <p className="text-sm text-white/30">
-            © {new Date().getFullYear()} TaskFlow Pro X. Built with <Heart className="inline h-3 w-3 text-red-500" /> for elite builders.
+            © {new Date().getFullYear()} KanuTech Pro. Built with <Heart className="inline h-3 w-3 text-red-500" /> for elite builders.
           </p>
           <div className="flex gap-8">
             <Link href="#" className="text-xs text-white/30 hover:text-white transition-colors">Terms of Service</Link>
