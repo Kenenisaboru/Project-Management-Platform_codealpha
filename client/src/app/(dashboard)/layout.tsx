@@ -26,9 +26,12 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-black text-white">
       <Sidebar />
-      <main className="lg:ml-64">
-        <div className="flex">
-          <div className="flex-1 p-8">
+      <main className="lg:ml-64 flex flex-col min-h-screen">
+        {/* Mobile Header Spacer (for the floating menu button) */}
+        <div className="lg:hidden h-20" />
+        
+        <div className="flex flex-1 flex-col xl:flex-row">
+          <div className="flex-1 p-4 sm:p-6 lg:p-8">
             {children}
           </div>
           <aside className="tour-activity-feed hidden xl:block w-80 p-8 border-l border-white/10">
