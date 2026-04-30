@@ -42,7 +42,7 @@ export default function AuthSidebar() {
         >
           <div className="flex items-center gap-3 text-white">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#00A8E8] to-[#88C057] shadow-lg overflow-hidden">
-              <img src="http://localhost:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-2xl">K</span>'; }} />
+              <img src="http://192.168.137.89:5000/static/photo_2026-04-30_18-04-43.jpg" alt="KanuTech Logo" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-2xl">K</span>'; }} />
             </div>
             <div>
               <h1 className="text-2xl font-bold">KanuTech Pro</h1>
