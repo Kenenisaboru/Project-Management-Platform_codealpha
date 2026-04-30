@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, User as UserIcon, Tag, MessageSquare, Paperclip, Edit2, Trash2, Send } from 'lucide-react';
 import { Task, TaskPriority, TaskStatus } from '@/lib/shared/types';
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/Toast';
 
 interface Comment {
   id: string;
