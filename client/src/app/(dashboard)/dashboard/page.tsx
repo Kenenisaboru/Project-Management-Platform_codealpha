@@ -81,7 +81,10 @@ export default function DashboardPage() {
   });
 
   const fetchProjects = async () => {
-    if (!currentWorkspace) return;
+    if (!currentWorkspace) {
+      setLoading(false);
+      return;
+    }
     
     setLoading(true);
     try {
@@ -263,9 +266,11 @@ export default function DashboardPage() {
               </Link>
             )) : (
               <EmptyState 
-                type="projects" 
-                onCreate={() => setIsModalOpen(true)}
-                actionLabel="Create Project"
+                type={!currentWorkspace ? 'workspaces' : 'projects'} 
+                onCreate={() => !currentWorkspace ? (window as any).openWorkspaceModal() : setIsModalOpen(true)}
+                actionLabel={!currentWorkspace ? 'Create Workspace' : 'Create Project'}
+                title={!currentWorkspace ? 'No Workspace Selected' : 'No Projects Found'}
+                description={!currentWorkspace ? 'Please create or select a workspace to start managing your projects.' : 'Get started by creating your first project in this workspace.'}
               />
             )}
           </div>

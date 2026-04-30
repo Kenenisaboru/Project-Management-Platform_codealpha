@@ -46,7 +46,9 @@ export default function LoginPage() {
       setSuccess(true);
       router.replace('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+      console.error('FULL LOGIN ERROR:', err);
+      const message = err.response?.data?.message || err.response?.data?.details || 'Login failed';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
