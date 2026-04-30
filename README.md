@@ -21,10 +21,13 @@
 
 Built with a heavy emphasis on a premium **Glassmorphism UI** and **dynamic micro-animations**, it provides teams with a stunning, real-time environment to track tasks, manage workflows, and analyze performance.
 
-## ✨ Key Features
-
-- **⚡ Real-Time Kanban Boards**: Drag-and-drop task management powered by `@dnd-kit` and instantly synchronized across all connected clients via `Socket.io`.
-- **📊 Advanced Analytics**: Visual charting of task distributions, project progress, and efficiency trends with one-click exports to PDF and PNG.
+### ✨ Key Features
+- **Real-Time Collaboration**: Drag-and-drop Kanban board powered by Socket.io, plus **live task comments**.
+- **Email Notifications**: Automated emails when assigned to tasks or mentioned.
+- **Role-Based Access Control**: Super Admins, Org Admins, Project Managers, and Members.
+- **Premium Glassmorphism UI**: High-end dark mode aesthetics built with Tailwind CSS.
+- **Advanced Analytics**: Real-time project completion tracking and efficiency metrics.
+- **Docker Ready**: One-command setup with `docker-compose`.
 - **🛡️ Secure Authentication**: Robust JWT-based authentication system with secure HttpOnly refresh cookies and encrypted password storage.
 - **🔐 Role-Based Access Control (RBAC)**: Comprehensive permission tiers (Super Admin, Org Admin, Project Manager, Member, Guest).
 - **🎛️ Dedicated Admin Console**: A secure portal for super-administrators to monitor system health (API, DB, WebSockets), manage users, and review activity logs.
@@ -56,51 +59,51 @@ Built with a heavy emphasis on a premium **Glassmorphism UI** and **dynamic micr
 Follow these steps to run KanuTech Pro locally on your machine.
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- MongoDB Atlas account (or local MongoDB instance)
-- Git
+- Docker & Docker Compose (Recommended)
+- OR Node.js (v18+) & MongoDB
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/Kenenisaboru/Project-Management-Platform_codealpha.git
-cd Project-Management-Platform_codealpha
-```
+### ⚡ Quick Start with Docker (Recommended)
 
-### 2. Backend Setup
-```bash
-cd server
-npm install
-```
-Create a `.env` file in the `server` directory and add your variables:
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_super_secret_jwt_key
-JWT_REFRESH_SECRET=your_super_secret_refresh_key
-CLIENT_URL=http://localhost:3000
-NODE_ENV=development
-```
-Start the backend server:
-```bash
-npm run dev
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Kenenisaboru/Project-Management-Platform_codealpha.git
+   cd Project-Management-Platform_codealpha
+   ```
 
-### 3. Frontend Setup
-Open a new terminal window:
-```bash
-cd client
-npm install
-```
-Create a `.env` file in the `client` directory:
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
-```
-Start the frontend development server:
-```bash
-npm run dev
-```
+2. **Set up Environment Variables:**
+   ```bash
+   # Server
+   cp server/.env.example server/.env
+   # Open server/.env and add your secrets/email credentials
 
-**The application will now be running at `http://localhost:3000`!**
+   # Client
+   cp client/.env.example client/.env.local
+   ```
+
+3. **Start the Platform:**
+   ```bash
+   docker-compose up -d --build
+   ```
+
+The application will be running at `http://localhost:3000`!
+
+### 🛠️ Manual Local Setup
+
+1. **Backend Setup:**
+   ```bash
+   cd server
+   npm install
+   cp .env.example .env
+   npm run dev
+   ```
+
+2. **Frontend Setup:**
+   ```bash
+   cd ../client
+   npm install
+   cp .env.example .env.local
+   npm run dev
+   ```
 
 ---
 
