@@ -88,6 +88,14 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', service: 'KanuTech Pro API' });
 });
 
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ 
+    message: 'Welcome to KanuTech Pro API', 
+    docs: '/api/v1',
+    health: '/health' 
+  });
+});
+
 // 404 handler
 app.use(notFound);
 // Global error handler
@@ -116,14 +124,17 @@ io.on('connection', (socket) => {
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/taskflow_prox';
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+  })
   .then(() => logger.info('Connected to MongoDB Atlas'))
   .catch((err) => logger.error('MongoDB connection error:', err));
 
 // Server start
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  logger.info(`⚡️[server]: Server is running at http://localhost:${PORT}`);
+server.listen(Number(PORT), '0.0.0.0', () => {
+  logger.info(`⚡️[server]: Server is running at http://0.0.0.0:${PORT}`);
 });
 
 export { io, logger };
