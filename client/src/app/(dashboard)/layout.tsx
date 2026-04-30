@@ -31,7 +31,7 @@ export default function DashboardLayout({
           <div className="flex-1 p-8">
             {children}
           </div>
-          <aside className="hidden xl:block w-80 p-8 border-l border-white/10">
+          <aside className="tour-activity-feed hidden xl:block w-80 p-8 border-l border-white/10">
             <ActivityFeed />
           </aside>
         </div>
