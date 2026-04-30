@@ -21,6 +21,15 @@ const OrganizationSchema = new Schema<IOrganization>(
   { timestamps: true }
 );
 
+OrganizationSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret: any) => {
+    ret.id = ret._id;
+    delete ret._id;
+  }
+});
+
 // Index for quick lookup by slug
 OrganizationSchema.index({ slug: 1 });
 
