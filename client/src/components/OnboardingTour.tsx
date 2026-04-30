@@ -1,6 +1,6 @@
 'use client';
 
-import { Joyride, Step, CallBackProps, STATUS } from 'react-joyride';
+import Joyride, { Step, CallBackProps, STATUS } from 'react-joyride';
 import { useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 
