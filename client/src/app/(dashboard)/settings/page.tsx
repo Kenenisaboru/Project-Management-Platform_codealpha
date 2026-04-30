@@ -177,12 +177,14 @@ export default function SettingsPage() {
               <Shield className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold font-outfit">Security & Security</h2>
+              <h2 className="text-2xl font-bold font-outfit">Security & Privacy</h2>
               <p className="text-sm text-white/40">Two-factor authentication and login history (Coming soon).</p>
             </div>
           </div>
         </section>
       </div>
+
+      <OnboardingTour />
     </div>
   );
 }
