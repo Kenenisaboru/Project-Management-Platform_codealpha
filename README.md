@@ -112,18 +112,21 @@ The application will be running at `http://localhost:3000`!
 Here is a look at the KanuTech Pro premium interface in action:
 
 ### Landing Page & Features
-![Landing Page & Features](./screenshots/landing-hero.png)
+![Landing Page & Features](./screenshots/photo_2026-04-30_19-14-19.jpg)
 <br/>
-![Features Detail](./screenshots/landing-features.png)
+![Features Detail](./screenshots/photo_2026-04-30_19-14-41.jpg)
 
 ### Dashboard Overview
-![Dashboard Overview](./screenshots/dashboard.png)
+![Dashboard Overview](./screenshots/photo_2026-04-30_19-14-50.jpg)
 
 ### My Tasks
-![My Tasks](./screenshots/my-tasks.png)
+![My Tasks](./screenshots/photo_2026-04-30_19-14-59.jpg)
 
 ### Settings & Profile
-![Settings](./screenshots/settings.png)
+![Settings](./screenshots/photo_2026-04-30_19-15-42.jpg)
+
+### Additional View
+![Additional View](./screenshots/photo_2026-04-30_19-17-56.jpg)
 
 ---
 
